@@ -28,7 +28,10 @@ class Mypromise{
     //6.Mypromise类中定义value和reason,用来存储执行器成功和失败的返回值
     value=null;
     reason=null;
-
+    //9.实现then方法多次调用添加多个处理函数 初始化回调为数组依次执行
+    successCallback=[];
+    failCallback=[];
+    
     reject=reason=>{
         //5.完成reject函数的状态改变（需要判断当前状态是否改变）
         //判断当前状态是否可以改变
@@ -67,4 +70,5 @@ class Mypromise{
             }
         })
     }
+    
 }
