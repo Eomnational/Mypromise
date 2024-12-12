@@ -110,8 +110,16 @@ class Mypromise{
                 
                 }
         })
+        return promise2;
     }
-
+    //17.finally方法 不管成功或者失败都会执行一次
+    finally(callback){
+        return this.then(value =>{
+            return Mypromise.resolve(callback()).then(()=>value);
+        },reason=>{
+            return Mypromise.reject(callback()).then(()=>{throw reason});
+        })
+    }
 
     //15.Promise.all
     static all(array){
