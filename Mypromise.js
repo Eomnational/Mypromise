@@ -4,4 +4,12 @@ class Mypromise{
     constructor(executor){
 
     }
+    //3.定义resolve和reject,用箭头函数，避免直接调用时this指向全局变量
+    resolve=value=>{
+
+    }
+
+    reject=reson=>{
+        
+    }
 }
