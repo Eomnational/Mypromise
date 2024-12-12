@@ -56,6 +56,11 @@ class Mypromise{
 
     //7.Mypromise类添加then方法，成功回调有一个参数表示成功之后的值；失败回调有一个参数表示失败之后的原因
     then(successCallback,failCallback){
+        //14.将then方法的参数变为可选参数
+        successCallback=successCallback ?successCallback : value=> this.value;
+        failCallback= failCallback ? failCallback : reason =>{throw this.reason};
+        
+        
         //10.实现then方法链式调用（写一个函数方法专门判断回调的结果是普通值还是promise,then方法返回的依旧是一个promise）
         let promise2=new Mypromise((resolve,reject)=>{
             //判断当前状态 执行对应回调 异步状态下存储当前回调等待执行
