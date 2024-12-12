@@ -8,7 +8,13 @@ const REJECTED=rejected;
 class Mypromise{
     //2.通过构造函数constructor,在执行这个类的时候需要传递一个执行器去立即调用
     constructor(executor){
+        //13.Promise实现捕获错误
+        try{
+            executor(this.resolve,this.reject);
+        }catch(e){
+            this.reject(e);
 
+        }
     }
     //3.定义resolve和reject,用箭头函数，避免直接调用时this指向全局变量
     resolve=value=>{
@@ -56,12 +62,24 @@ class Mypromise{
             if(this.status===FULFILLED){
                 //异步
                 setTimeout(()=>{
-
+                    //13.then方法捕获错误
+                    try{
+                        let x=successCallback(this.value);
+                        resolvePromise(promise2,x,resolve,reject);
+                    }catch(e){
+                        reject(e);
+                    }
                 })
             }else if(this.status===REJECTED){
                 //异步
                 setTimeout(()=>{
-
+                    //13.then方法捕获错误
+                    try{
+                        let x=failCallback(this.reason);
+                        resolvePromise(promise2,x,resolve,reject);
+                    }catch(e){
+                        reject(e);
+                    }
                 })
    
             }else{
