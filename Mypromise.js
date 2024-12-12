@@ -137,6 +137,12 @@ class Mypromise{
 
         })
     }
+
+    //16.Promise.resolve返回一个promise
+    static resolve(value){
+        if(value instanceof Mypromise) return value;
+        return new Mypromise(resolve => resolve(value));
+    }
   
 }
 
