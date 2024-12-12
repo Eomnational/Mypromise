@@ -8,7 +8,13 @@ const REJECTED=rejected;
 class Mypromise{
     //2.通过构造函数constructor,在执行这个类的时候需要传递一个执行器去立即调用
     constructor(executor){
+        //13.Promise实现捕获错误
+        try{
+            executor(this.resolve,this.reject);
+        }catch(e){
+            this.reject(e);
 
+        }
     }
     //3.定义resolve和reject,用箭头函数，避免直接调用时this指向全局变量
     resolve=value=>{
@@ -50,18 +56,35 @@ class Mypromise{
 
     //7.Mypromise类添加then方法，成功回调有一个参数表示成功之后的值；失败回调有一个参数表示失败之后的原因
     then(successCallback,failCallback){
+        //14.将then方法的参数变为可选参数
+        successCallback=successCallback ?successCallback : value=> this.value;
+        failCallback= failCallback ? failCallback : reason =>{throw this.reason};
+        
+        
         //10.实现then方法链式调用（写一个函数方法专门判断回调的结果是普通值还是promise,then方法返回的依旧是一个promise）
         let promise2=new Mypromise((resolve,reject)=>{
             //判断当前状态 执行对应回调 异步状态下存储当前回调等待执行
             if(this.status===FULFILLED){
                 //异步
                 setTimeout(()=>{
-
+                    //13.then方法捕获错误
+                    try{
+                        let x=successCallback(this.value);
+                        resolvePromise(promise2,x,resolve,reject);
+                    }catch(e){
+                        reject(e);
+                    }
                 })
             }else if(this.status===REJECTED){
                 //异步
                 setTimeout(()=>{
-
+                    //13.then方法捕获错误
+                    try{
+                        let x=failCallback(this.reason);
+                        resolvePromise(promise2,x,resolve,reject);
+                    }catch(e){
+                        reject(e);
+                    }
                 })
    
             }else{
@@ -87,5 +110,61 @@ class Mypromise{
                 
                 }
         })
+        return promise2;
     }
+    //17.finally方法 不管成功或者失败都会执行一次
+    finally(callback){
+        return this.then(value =>{
+            return Mypromise.resolve(callback()).then(()=>value);
+        },reason=>{
+            return Mypromise.reject(callback()).then(()=>{throw reason});
+        })
+    }
+    //18.catch
+    catch(failCallback){
+        return this.then(undefined,failCallback);
+    }
+    //15.Promise.all
+    static all(array){
+        let result=[];
+        let index;
+        return new Promise((resolve,reject)=>{
+            function addData(key,value){
+                result[key]=value;
+                index++;
+                if(index===array.length){
+                    resolve(result);
+                }
+            }
+
+            for(let i=0;i<array.length;i++){
+                let current=array[i];
+                if(current instanceof Mypromise){
+                    current.then(value => addData(i,value),reason=> reject(reason));
+                }else{
+                    addData(i,array[i]);
+                }
+            }
+
+        })
+    }
+
+    //16.Promise.resolve返回一个promise
+    static resolve(value){
+        if(value instanceof Mypromise) return value;
+        return new Mypromise(resolve => resolve(value));
+    }
+  
+}
+
+//11.处理promise返回值各种类型情况（普通值，promise）
+function resolvePromise(promise2,x,resolve,reject) {
+   if(promise2===x){
+    return reject(new TypeError('Chaining cycle detected for promiese #<promise>'));
+   }     
+   if(x instanceof Mypromise){
+    x.then(resolve,reject);
+   }else{
+    resolve(x);
+   }
 }
