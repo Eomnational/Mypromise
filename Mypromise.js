@@ -111,6 +111,32 @@ class Mypromise{
                 }
         })
     }
+
+
+    //15.Promise.all
+    static all(array){
+        let result=[];
+        let index;
+        return new Promise((resolve,reject)=>{
+            function addData(key,value){
+                result[key]=value;
+                index++;
+                if(index===array.length){
+                    resolve(result);
+                }
+            }
+
+            for(let i=0;i<array.length;i++){
+                let current=array[i];
+                if(current instanceof Mypromise){
+                    current.then(value => addData(i,value),reason=> reject(reason));
+                }else{
+                    addData(i,array[i]);
+                }
+            }
+
+        })
+    }
   
 }
 
