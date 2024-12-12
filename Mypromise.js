@@ -120,7 +120,10 @@ class Mypromise{
             return Mypromise.reject(callback()).then(()=>{throw reason});
         })
     }
-
+    //18.catch
+    catch(failCallback){
+        return this.then(undefined,failCallback);
+    }
     //15.Promise.all
     static all(array){
         let result=[];
