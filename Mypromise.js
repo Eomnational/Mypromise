@@ -12,10 +12,32 @@ class Mypromise{
     }
     //3.定义resolve和reject,用箭头函数，避免直接调用时this指向全局变量
     resolve=value=>{
-
+        //5.完成resolve函数的状态改变（需要判断当前状态是否改变）
+        //判断当前状态是否可以改变
+        if(this.status!==PENDING) return
+        //改变当前状态
+        this.status=FULFILLED;
+        //保存返回值
+        this.value=value;
+        //执行成功回调
+        while(this.successCallback.length){
+            this.successCallback.shift()(this.value)
+        }
     }
 
-    reject=reson=>{
+    reject=reason=>{
+        //5.完成reject函数的状态改变（需要判断当前状态是否改变）
+        //判断当前状态是否可以改变
+        if(this.status!==PENDING) return
+        //改变当前状态
+        this.status = REJECTED;
+        //保存返回值
+        this.reason = reason;
+        //执行失败回调
+        while(this.failCallback.length){
+            this.failCallback.shift()(this.reason)
+        }
+
 
     }
 }
