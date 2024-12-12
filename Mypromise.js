@@ -47,7 +47,24 @@ class Mypromise{
 
     //7.Mypromise类添加then方法，成功回调有一个参数表示成功之后的值；失败回调有一个参数表示失败之后的原因
     then(successCallback,failCallback){
-        
+        //8.处理异步逻辑（pending状态下在then中将回调存起来）
+        this.successCallback.push(()=>{
+            try{
+                let x=successCallback(this.value);
+                resolvePromise(promise2,x,resolve,reject);
+            }catch(e){
+                reject(e);
+            }
 
+        })
+
+        this.failCallback.push(()=>{
+            try{
+                let x=failCallback(this.reason);
+                resolvePromise(promise2,x,resolve,reject);
+            }catch(e){
+                reject(e);
+            }
+        })
     }
 }
