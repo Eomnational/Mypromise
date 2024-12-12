@@ -31,7 +31,7 @@ class Mypromise{
     //9.实现then方法多次调用添加多个处理函数 初始化回调为数组依次执行
     successCallback=[];
     failCallback=[];
-    
+
     reject=reason=>{
         //5.完成reject函数的状态改变（需要判断当前状态是否改变）
         //判断当前状态是否可以改变
@@ -50,25 +50,42 @@ class Mypromise{
 
     //7.Mypromise类添加then方法，成功回调有一个参数表示成功之后的值；失败回调有一个参数表示失败之后的原因
     then(successCallback,failCallback){
-        //8.处理异步逻辑（pending状态下在then中将回调存起来）
-        this.successCallback.push(()=>{
-            try{
-                let x=successCallback(this.value);
-                resolvePromise(promise2,x,resolve,reject);
-            }catch(e){
-                reject(e);
-            }
+        //10.实现then方法链式调用（写一个函数方法专门判断回调的结果是普通值还是promise,then方法返回的依旧是一个promise）
+        let promise2=new Mypromise((resolve,reject)=>{
+            //判断当前状态 执行对应回调 异步状态下存储当前回调等待执行
+            if(this.status===FULFILLED){
+                //异步
+                setTimeout(()=>{
 
-        })
+                })
+            }else if(this.status===REJECTED){
+                //异步
+                setTimeout(()=>{
 
-        this.failCallback.push(()=>{
-            try{
-                let x=failCallback(this.reason);
-                resolvePromise(promise2,x,resolve,reject);
-            }catch(e){
-                reject(e);
-            }
+                })
+   
+            }else{
+                     //8.处理异步逻辑（pending状态下在then中将回调存起来）
+                    this.successCallback.push(()=>{
+                        try{
+                            let x=successCallback(this.value);
+                            resolvePromise(promise2,x,resolve,reject);
+                        }catch(e){
+                            reject(e);
+                        }
+
+                    })
+
+                    this.failCallback.push(()=>{
+                        try{
+                            let x=failCallback(this.reason);
+                            resolvePromise(promise2,x,resolve,reject);
+                        }catch(e){
+                            reject(e);
+                        }
+                    })
+                
+                }
         })
     }
-    
 }
