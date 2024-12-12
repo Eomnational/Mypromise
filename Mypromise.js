@@ -88,4 +88,17 @@ class Mypromise{
                 }
         })
     }
+  
+}
+
+//11.处理promise返回值各种类型情况（普通值，promise）
+function resolvePromise(promise2,x,resolve,reject) {
+   if(promise2===x){
+    return reject(new TypeError('Chaining cycle detected for promiese #<promise>'));
+   }     
+   if(x instanceof Mypromise){
+    x.then(resolve,reject);
+   }else{
+    resolve(x);
+   }
 }
