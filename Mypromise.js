@@ -24,7 +24,11 @@ class Mypromise{
             this.successCallback.shift()(this.value)
         }
     }
-
+    status=PENDING;
+    //6.Mypromise类中定义value和reason,用来存储执行器成功和失败的返回值
+    value=null;
+    reason=null;
+    
     reject=reason=>{
         //5.完成reject函数的状态改变（需要判断当前状态是否改变）
         //判断当前状态是否可以改变
